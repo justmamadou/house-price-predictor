@@ -1,0 +1,21 @@
+services:
+  model:
+    image: mamadoudev/fastapi:v1
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+  streamlit:
+    image: mamadoudev/streamlit-app:v1
+    build: 
+      context: ./streamlit_app
+      dockerfile: Dockerfiles
+    container_name: streamlit
+    ports:
+      - "8501:8501"
+    depends_on:
+      - model
+    environment:
+      - API_URL=http://model:8000
