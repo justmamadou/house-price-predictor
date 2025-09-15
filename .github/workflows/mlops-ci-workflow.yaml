@@ -32,7 +32,7 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Data Processing - commit id: ${ GITHUB_SHA::6 }'
+          message: 'Data Processing - commit id: "${ GITHUB_SHA::6 }"'
 
   Feature-Engineering:
     needs: Data-Processing
@@ -62,7 +62,7 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Feature Engineering - commit id: ${ GITHUB_SHA::6 }'
+          message: 'Feature Engineering - commit id: "${ GITHUB_SHA::6 }"'
 
   Model-Training:
     needs: Feature-Engineering
@@ -107,7 +107,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
