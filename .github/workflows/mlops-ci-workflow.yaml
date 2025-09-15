@@ -8,10 +8,8 @@ on:
       - main
 
 jobs:
-  Workflow:
+  Data-Processing:
     runs-on: ubuntu-latest
-    outputs:
-      commit_id: ${{ env.sha_short }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,11 +23,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Run Data Processing Script
         shell: bash
         run: |
           python src/data/run_processing.py   --input data/raw/house_data.csv   --output data/processed/cleaned_house_data.csv
 
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Data Processing - commit id: ${{ GITHUB_SHA::6 }}'
+
+  Feature-Engineering:
+    needs: Data-Processing
+    runs-on: ubuntu-latest
+    steps:
       - name: Run feature engineering Script
         shell: bash
         run: |
@@ -38,6 +46,15 @@ jobs:
           --output data/processed/featured_house_data.csv \
           --preprocessor models/trained/preprocessor.pkl
 
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Feature Engineering - commit id: ${{ GITHUB_SHA::6 }}'
+
+  Model-Training:
+    needs: Feature-Engineering
+    runs-on: ubuntu-latest
+    steps:
       - name: Run MLFlow Tracking Server
         shell: bash
         run: |
@@ -58,7 +75,11 @@ jobs:
           docker stop mlflow-tracking-server
           docker rm mlflow-tracking-server
           docker rmi ghcr.io/mlflow/mlflow:latest
-      
+
+  Docker-Build-and-Push:
+    needs: Model-Training
+    runs-on: ubuntu-latest
+    steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
