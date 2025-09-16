@@ -29,10 +29,11 @@ jobs:
         run: |
           python src/data/run_processing.py   --input data/raw/house_data.csv   --output data/processed/cleaned_house_data.csv
 
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
+      - name: Upload cleaned data
+        uses: actions/upload-artifact@v4
         with:
-          message: 'Data Processing - commit id: "${ GITHUB_SHA::6 }"'
+          name: cleaned-house-data
+          path: data/processed/cleaned_house_data.csv
 
   Feature-Engineering:
     needs: Data-Processing
@@ -51,6 +52,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - uses: actions/download-artifact@v5
+        with:
+          name: cleaned-house-data
+          path: data/processed/cleaned_house_data.csv
+
       - name: Run feature engineering Script
         shell: bash
         run: |
@@ -59,10 +65,17 @@ jobs:
           --output data/processed/featured_house_data.csv \
           --preprocessor models/trained/preprocessor.pkl
 
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
+      - name: Upload featured data
+        uses: actions/upload-artifact@v4
         with:
-          message: 'Feature Engineering - commit id: "${ GITHUB_SHA::6 }"'
+          name: featured-house-data
+          path: data/processed/featured_house_data.csv
+
+      - name: Upload preprocessed data
+        uses: actions/upload-artifact@v4
+        with:
+          name: preprocessed-house-data
+          path: models/trained/preprocessor.pkl
 
   Model-Training:
     needs: Feature-Engineering
@@ -86,6 +99,16 @@ jobs:
           docker pull ghcr.io/mlflow/mlflow:latest
           docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
           mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /tmp/mlruns
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: featured-house-data
+          path: data/processed/featured_house_data.csv
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: preprocessed-house-data
+          path: models/trained/preprocessor.pkl
       
       - name: Run model training Script
         shell: bash
