@@ -52,7 +52,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v4
         with:
           name: cleaned-house-data
           path: data/processed/cleaned_house_data.csv
@@ -100,12 +100,12 @@ jobs:
           docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
           mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /tmp/mlruns
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v4
         with:
           name: featured-house-data
           path: data/processed/featured_house_data.csv
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@4
         with:
           name: preprocessed-house-data
           path: models/trained/preprocessor.pkl
