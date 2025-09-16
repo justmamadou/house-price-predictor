@@ -1,8 +1,9 @@
-name: MLOps CI Workflow
+name: MLOps Pipeline
 on:
   push:
     branches:
       - main
+    tags: [ 'v*.*.*']
   pull_request:
     branches:
       - main
@@ -72,6 +73,14 @@ jobs:
           docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
           mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /tmp/mlruns
 
+      - name: Wait for MLFlow Tracking Server to be ready
+        shell: bash
+        run: |
+          echo "Waiting for MLFlow Tracking Server to be ready..."
+          for i in {1..10}; do
+            curl -f http://localhost:5555/health || sleep 5;
+          done
+
       - uses: actions/download-artifact@v4
         with:
           name: processed-data
@@ -94,12 +103,6 @@ jobs:
         with:
           name: model
           path: models/trained/house_price_model.pkl
-
-      - name: Upload preprocessor
-        uses: actions/upload-artifact@v4
-        with:
-          name: model-preprocessor
-          path: models/trained/preprocessor.pkl
           
       - name: Cleanup MLFlow Tracking Server
         shell: bash
@@ -122,8 +125,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: model-preprocessor
-          path: models/trained/preprocessor.pkl
+          name: preprocessor
+          path: models/trained/
 
 
       - name: Login to Docker Hub
