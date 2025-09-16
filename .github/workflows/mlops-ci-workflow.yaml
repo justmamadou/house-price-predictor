@@ -29,34 +29,6 @@ jobs:
         run: |
           python src/data/run_processing.py   --input data/raw/house_data.csv   --output data/processed/cleaned_house_data.csv
 
-      - name: Upload cleaned data
-        uses: actions/upload-artifact@v4
-        with:
-          name: cleaned-house-data
-          path: data/processed/cleaned_house_data.csv
-
-  Feature-Engineering:
-    needs: Data-Processing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11.13'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: cleaned-house-data
-          path: data/processed/cleaned_house_data.csv
-
       - name: Run feature engineering Script
         shell: bash
         run: |
@@ -65,16 +37,16 @@ jobs:
           --output data/processed/featured_house_data.csv \
           --preprocessor models/trained/preprocessor.pkl
 
-      - name: Upload featured data
+      - name: Upload Processed data
         uses: actions/upload-artifact@v4
         with:
-          name: featured-house-data
+          name: processed-data
           path: data/processed/featured_house_data.csv
 
-      - name: Upload preprocessed data
+      - name: Upload preprocessor
         uses: actions/upload-artifact@v4
         with:
-          name: preprocessed-house-data
+          name: preprocessor
           path: models/trained/preprocessor.pkl
 
   Model-Training:
@@ -102,12 +74,12 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: featured-house-data
-          path: data/processed/featured_house_data.csv
+          name: processed-data
+          path: data/processed/
 
       - uses: actions/download-artifact@4
         with:
-          name: preprocessed-house-data
+          name: preprocessor
           path: models/trained/preprocessor.pkl
       
       - name: Run model training Script
