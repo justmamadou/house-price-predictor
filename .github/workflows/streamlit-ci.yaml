@@ -26,4 +26,4 @@ jobs:
         with:
           context: ./streamlit_app
           push: true
-          tags: docker.io/${{ vars.DOCKERHUB_USERNAME }}/streamlit:latest
+          tags: docker.io/${{ vars.DOCKERHUB_USERNAME }}/streamlit-app:latest
