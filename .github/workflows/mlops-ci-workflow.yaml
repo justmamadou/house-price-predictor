@@ -50,7 +50,7 @@ jobs:
           path: models/trained/preprocessor.pkl
 
   Model-Training:
-    needs: Feature-Engineering
+    needs: Data-Processing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
