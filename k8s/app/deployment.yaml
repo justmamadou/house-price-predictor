@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: streamlit
+  name: streamlit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamlit
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: streamlit
+    spec:
+      containers:
+      - image: mamadoudev/streamlit-app:v1
+        name: streamlit-app
+        ports:
+        - containerPort: 8501
