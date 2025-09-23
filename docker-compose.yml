@@ -1,6 +1,6 @@
 services:
   model:
-    image: mamadoudev/fastapi:v2
+    #image: mamadoudev/fastapi:v2
     build: 
       context: .
       dockerfile: Dockerfile
