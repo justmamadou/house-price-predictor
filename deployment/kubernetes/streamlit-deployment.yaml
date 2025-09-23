@@ -16,14 +16,14 @@ spec:
         app: streamlit
     spec:
       containers:
-      - image: mamadoudev/streamlit-app:v1
+      - image: mamadoudev/streamlit-app:latest
         name: streamlit-app
         ports:
         - containerPort: 8501
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "50m"
-            limits:
-              memory: "128Mi"
-              cpu: "100m"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
