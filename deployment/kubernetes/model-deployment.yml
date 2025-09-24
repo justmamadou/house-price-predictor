@@ -15,7 +15,7 @@ spec:
         app: model
     spec:
       containers:
-      - image: mamadoudev/fastapi:5aeafc
+      - image: mamadoudev/fastapi:d9d966s
         name: fastapi
         ports:
         - containerPort: 8000
