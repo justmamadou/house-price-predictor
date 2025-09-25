@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomizations
+resources:  
+- model-deployment.yml
+- model-service.yml
+- streamlit-deployment.yml
+- streamlit-service.yml
